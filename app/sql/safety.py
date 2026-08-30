@@ -61,4 +61,4 @@ def ensure_read_only(sql: str, *, max_rows: int, dialect: str = "duckdb") -> str
     if isinstance(statement, exp.Select) and statement.args.get("limit") is None:
         statement = statement.limit(max_rows)
 
-    return statement.sql(dialect=dialect)
+    return str(statement.sql(dialect=dialect))
