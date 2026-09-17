@@ -1,7 +1,7 @@
 [project]
 name = "sqlsmith"
 version = "0.1.0"
-description = "Natural-language-to-SQL service with a read-only safety layer and eval-gated CI."
+description = "Safe natural-language-to-SQL product foundation with FastAPI, PostgreSQL-backed history, and a Next.js client."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -11,6 +11,9 @@ dependencies = [
     "pydantic-settings>=2.6",
     "duckdb>=1.1",
     "sqlglot>=25.0",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.2",
+    "PyJWT>=2.10",
 ]
 
 [project.optional-dependencies]
@@ -42,7 +45,7 @@ strict = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = ["duckdb", "sqlglot", "sqlglot.*", "anthropic"]
+module = ["duckdb", "sqlglot", "sqlglot.*", "anthropic", "jwt"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
