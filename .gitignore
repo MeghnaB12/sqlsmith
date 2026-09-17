@@ -10,14 +10,21 @@ dist/
 .venv/
 .env
 
+# Local application state
+*.db
+*.sqlite
+*.sqlite3
+
+# Frontend
+node_modules/
+.next/
+
 # Tooling caches
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
 .coverage
 htmlcov/
-
-# uv
 
 # IDE / OS
 .idea/
