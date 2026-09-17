@@ -26,9 +26,7 @@ async def test_query_returns_sql_and_rows(
     assert history.json()[0]["row_count"] == body["row_count"]
 
 
-async def test_query_can_skip_execution(
-    client: AsyncClient, auth_headers: dict[str, str]
-) -> None:
+async def test_query_can_skip_execution(client: AsyncClient, auth_headers: dict[str, str]) -> None:
     response = await client.post(
         "/v1/query",
         json={"question": "list customers", "execute": False},
