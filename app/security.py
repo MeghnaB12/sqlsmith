@@ -6,7 +6,7 @@ import base64
 import hashlib
 import hmac
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import jwt
 
@@ -19,11 +19,9 @@ def hash_password(password: str) -> str:
     """Hash a password with PBKDF2-HMAC-SHA256 and a random salt."""
     salt = os.urandom(16)
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, _PBKDF2_ITERATIONS)
-    return "pbkdf2_sha256${}${}${}".format(
-        _PBKDF2_ITERATIONS,
-        base64.urlsafe_b64encode(salt).decode(),
-        base64.urlsafe_b64encode(digest).decode(),
-    )
+    salt_encoded = base64.urlsafe_b64encode(salt).decode()
+    digest_encoded = base64.urlsafe_b64encode(digest).decode()
+    return f"pbkdf2_sha256${_PBKDF2_ITERATIONS}${salt_encoded}${digest_encoded}"
 
 
 def verify_password(password: str, encoded: str) -> bool:
@@ -43,7 +41,7 @@ def verify_password(password: str, encoded: str) -> bool:
 def create_access_token(user_id: int) -> str:
     """Create a signed JWT for a user id."""
     settings = get_settings()
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     payload = {
         "sub": str(user_id),
         "iat": now,
