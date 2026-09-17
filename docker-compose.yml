@@ -1,4 +1,18 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sqlsmith
+      POSTGRES_USER: sqlsmith
+      POSTGRES_PASSWORD: sqlsmith
+    volumes:
+      - sqlsmith_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sqlsmith -d sqlsmith"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api:
     build: .
     ports:
@@ -8,12 +22,31 @@ services:
         required: false
     environment:
       LOG_LEVEL: INFO
+      DATABASE_URL: postgresql+psycopg://sqlsmith:sqlsmith@db:5432/sqlsmith
+      CORS_ORIGINS: http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test:
         - CMD
         - python
         - -c
         - import urllib.request; urllib.request.urlopen('http://localhost:8000/health')
-      interval: 30s
+      interval: 10s
       timeout: 3s
-      retries: 3
+      retries: 5
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  sqlsmith_postgres:
